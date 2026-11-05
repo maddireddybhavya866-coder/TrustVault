@@ -2,3 +2,4 @@ Flask>=3.0,<4
 Flask-Login>=0.6,<1
 gunicorn>=21,<24
 pytest>=8,<9
+Flask-WTF>=1.2,<2

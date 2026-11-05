@@ -1,4 +1,5 @@
 import os, sqlite3, uuid, hashlib, json, hmac
+from flask_wtf.csrf import CSRFProtect
 def now():
     return datetime.now().isoformat(timespec="seconds")
 from datetime import datetime, timezone
@@ -25,6 +26,8 @@ app.config.update(
     SESSION_COOKIE_SAMESITE="Lax",
     SESSION_COOKIE_SECURE=os.environ.get("COOKIE_SECURE", "0") == "1",
 )
+csrf = CSRFProtect(app)
+
 login_manager = LoginManager(app)
 login_manager.login_view = "login"
 
