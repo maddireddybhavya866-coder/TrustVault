@@ -1,6 +1,7 @@
 import pytest
 from pathlib import Path
 import app as tv
+tv.limiter.enabled = False
 
 @pytest.fixture()
 def client(tmp_path, monkeypatch):

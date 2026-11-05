@@ -9,6 +9,15 @@ from flask import Flask, render_template, request, redirect, url_for, flash, sen
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
+from werkzeug.middleware.proxy_fix import ProxyFix
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+from werkzeug.middleware.proxy_fix import ProxyFix
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+app = Flask(__name__)
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1)
+limiter = Limiter(get_remote_address, app=app, default_limits=[])
 
 ROOT = Path(__file__).resolve().parent
 DB_PATH = Path(os.environ.get("DATABASE_PATH", ROOT / "trustvault.db"))
@@ -194,6 +203,7 @@ def register():
     return render_template("register.html")
 
 @app.route("/login", methods=["GET", "POST"])
+@limiter.limit("5 per minute", methods=["POST"])
 def login():
     if request.method == "POST":
         username = request.form.get("username", "").strip().lower()
