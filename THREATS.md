@@ -4,7 +4,7 @@ Update this document after running each test. Do not claim a threat is fixed unl
 
 | Threat | Mitigation in this starter | Test/evidence | Remaining risk |
 |---|---|---|---|
-| IDOR: viewer guesses document ID | Every detail/download route checks server-side permission | `test_private_document_denied_to_unshared_viewer` | Admin has global access by design |
+| IDOR: viewer guesses document ID | Every detail/download route checks server-side permission | `test_private_document_denied_to_unshared_viewer` passes locally. Live test 2026-11-05: viewer got 404 on /document/N/download for an unshared document.| Admin has global access by design |
 | Revoked user reuses old URL | Permission is queried on every request; no public file URL | `test_owner_can_grant_and_revoke_access` | Already downloaded copies cannot be recalled |
 | Viewer uploads file | Role decorator blocks upload route | `test_viewer_cannot_upload` | Role changes require admin protection |
 | Unauthorized edit/delete | Server-side owner/edit checks | Add explicit tests before claiming complete | Admin can edit/delete globally |
