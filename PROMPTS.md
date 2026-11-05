@@ -9,12 +9,12 @@ Keep this file current as you work. The challenge asks for at least five dated e
 - What I found wrong / changed: Pending my own review and test run. Record a concrete finding here; do not claim one until observed.
 - Evidence/commit: TODO – add the real commit URL after committing.
 
-## Entry 2 – Date: YYYY-MM-DD – Authorization review
-- Prompt: [Paste your actual prompt]
-- AI output: [Summarise]
-- Specific issue I caught: [Describe the actual issue]
-- My correction and test: [Describe]
-- Commit: [Real commit URL]
+## Entry 2 – 2026-11-05 – Authorization review (live IDOR test)
+- Prompt: Asked the AI to help me test whether a viewer can reach an unshared document on the deployed site, and to find where the download decision is made in app.py.
+- AI output: Gave me a test procedure and, after I pasted the code, pointed to the check in download(): allowed = current_user.role == "admin" or can_read(doc, current_user.id).
+- Specific issue I caught: In my first live test, the download worked while I thought I was "viewer". I did not accept that as fine and I did not assume the code was correct. I checked the route code, then re-tested.
+- My correction and test: The AI suggested a shared incognito session (owner cookie still active). I did not trust that guess. I closed all incognito windows, opened a fresh one, logged in as viewer and requested /document/N/download for an unshared document. Result: 404.
+- Commit: https://github.com/maddireddybhavya866-coder/TrustVault/commit/95c7208
 
 ## Entry 3 – Date: YYYY-MM-DD – Audit trail review
 - Prompt: [Paste your actual prompt]
