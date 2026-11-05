@@ -54,3 +54,43 @@ def test_audit_chain_detects_modified_entry(client):
         c.execute("UPDATE audit_logs SET details='{}' WHERE id=1")
         c.commit()
     assert not tv.verify_audit_chain()
+def make_doc(client, title="Doc"):
+    login(client, "owner", OWNER_PW)
+    client.post("/upload", data={"title": title, "category": "HR",
+        "file": (io.BytesIO(b"data"), "a.txt")}, content_type="multipart/form-data")
+    with tv.db() as c:
+        doc_id = c.execute("SELECT id FROM documents").fetchone()["id"]
+    client.get("/logout")
+    return doc_id
+
+def test_unshared_viewer_cannot_edit(client):
+    doc_id = make_doc(client)
+    login(client, "viewer", VIEWER_PW)
+    r = client.post(f"/document/{doc_id}/edit", data={"title": "Hacked", "category": "X"})
+    assert r.status_code == 404
+    with tv.db() as c:
+        assert c.execute("SELECT title FROM documents WHERE id=?", (doc_id,)).fetchone()["title"] == "Doc"
+
+def test_unshared_viewer_cannot_delete(client):
+    doc_id = make_doc(client)
+    login(client, "viewer", VIEWER_PW)
+    r = client.post(f"/document/{doc_id}/delete")
+    assert r.status_code == 404
+    with tv.db() as c:
+        assert c.execute("SELECT deleted FROM documents WHERE id=?", (doc_id,)).fetchone()["deleted"] == 0
+
+def test_viewer_cannot_grant_permissions(client):
+    doc_id = make_doc(client)
+    login(client, "viewer", VIEWER_PW)
+    client.post(f"/document/{doc_id}/permissions", data={"username": "viewer", "can_read": "on"})
+    with tv.db() as c:
+        assert c.execute("SELECT COUNT(*) n FROM permissions").fetchone()["n"] == 0
+
+def test_read_only_grant_cannot_edit(client):
+    doc_id = make_doc(client)
+    login(client, "owner", OWNER_PW)
+    client.post(f"/document/{doc_id}/permissions", data={"username": "viewer", "can_read": "on"})
+    client.get("/logout")
+    login(client, "viewer", VIEWER_PW)
+    r = client.post(f"/document/{doc_id}/edit", data={"title": "Hacked", "category": "X"})
+    assert r.status_code == 404
