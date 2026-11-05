@@ -8,17 +8,17 @@ Update this document after running each test. Do not claim a threat is fixed unl
 | Revoked user reuses old URL | Permission is queried on every request; no public file URL | `test_owner_can_grant_and_revoke_access` | Already downloaded copies cannot be recalled |
 | Viewer uploads file | Role decorator blocks upload route | `test_viewer_cannot_upload` | Role changes require admin protection |
 | Unauthorized edit/delete | Server-side owner/edit checks | Add explicit tests before claiming complete | Admin can edit/delete globally |
-| Malicious file upload | Extension allowlist, secure filename, size limit, random stored name | Manually test disallowed extension and oversized file | No signature validation or antivirus scan |
+| Malicious file upload | Extension allowlist, secure filename, size limit, random stored name | Manual test 2026-11-05 on live: test.exe and test.txt.exe were rejected (extension allowlist); an 11 MB file was rejected (10 MB limit). No automated upload tests yet. | No signature validation or antivirus scan |
 | Audit record alteration | Hash chain and verification function | `test_audit_chain_detects_modified_entry` | DB administrator can rewrite entire chain |
-| Password disclosure | Werkzeug password hashing | Inspect database; verify no plaintext password | Demo credentials must be changed |
+| Password disclosure | Werkzeug password hashing | Local DB check 2026-11-05: all 4 users have scrypt hashes in password_hash; no plaintext password stored. Live database not inspected. | Demo credentials must be changed |
 | Session theft/fixation | Flask-Login and HttpOnly/SameSite cookies | Manual cookie inspection | Secure cookie enabled only with COOKIE_SECURE=1 |
 | CSRF on state-changing forms | Flask-WTF CSRFProtect on all POST forms | Manual test 2026-11-05 on live: POST /login without a token returned 400 "CSRF token is missing"; login, upload, edit, grant and delete work with tokens in a browser. Automated tests run with CSRF disabled (WTF_CSRF_ENABLED=False), so there is no automated CSRF test yet. | Logout is a GET route, so it can be triggered cross-site (low impact). |
 | Brute-force login | Flask-Limiter: 5 POST /login per minute per IP (in-memory storage) | Manual test 2026-11-05 on live: 6th wrong-password attempt returned 429 Too Many Requests. Automated tests disable the limiter, so there is no automated rate-limit test yet. | In-memory limit is per worker and resets on restart; no account lockout; attackers using many IPs are not limited. |
 | SQL injection | SQL values passed as parameters | Review SQL calls and add injection tests | Dynamic SQL fragments are limited to fixed strings |
 | Direct filesystem access | Random filenames outside static directory | Check no public upload route exists | Host/operator filesystem access remains |
 | Audit log deletion/reordering | Hash-chain detects simple alteration | Tamper test | Need external append-only/WORM storage for stronger evidence |
-| XSS via metadata | Jinja autoescaping | Test HTML payload in title | Review any future `safe` rendering |
-| File overwrite/path traversal | `secure_filename` and generated UUID storage name | Try `../../...` filename | Add content-signature and archive-bomb checks |
+| XSS via metadata | Jinja autoescaping | Manual test 2026-11-05 on live: title <script>alert(1)</script> showed as plain text on dashboard, detail and edit pages; no alert. No automated XSS test yet. | Review any future `safe` rendering |
+| File overwrite/path traversal | `secure_filename` and generated UUID storage name | Code review and local check 2026-11-05: secure_filename('../../x.txt') returned x.txt; upload route saves to UPLOAD_DIR / uuid4().hex, so the user filename is never used in the disk path. Not tested through the live upload form. | Add content-signature and archive-bomb checks |
 
 ## Threat model
 Assets: private document bytes, metadata, permission grants, user credentials, audit history.
@@ -26,4 +26,4 @@ Trust boundaries: browser-to-Flask requests; Flask-to-SQLite; Flask-to-private f
 Primary security rule: the server makes the authorization decision on every document operation. UI visibility is not authorization.
 
 ## Accepted limitations
-This starter is a demonstration. Do not upload real confidential data. Before production, malware scanning, signature-based file validation, robust backup/restore, external immutable audit storage, secure secret management and a persistent private storage service.
+This starter is a demonstration. Do not upload real confidential data. Before production, add malware scanning, signature-based file validation, robust backup/restore, external immutable audit storage, secure secret management and a persistent private storage service.
