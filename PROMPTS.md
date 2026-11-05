@@ -2,7 +2,7 @@
 
 Keep this file current as you work. The challenge asks for at least five dated entries, including the prompt (or fair summary), output, a specific error/limitation you caught, your correction, and the commit link. Do not invent errors or commit hashes. Replace placeholders only after you have personally reviewed and tested the code.
 
-## Entry 1 – 2026-11-04 – Initial project scaffold
+## Entry 1 – 2026-11-05 – Initial project scaffold
 - Asked: Help scaffold a Flask secure document-sharing web application with three roles, document-level permissions, audit events, tests and documentation.
 - Produced: Initial Flask app, SQLite schema, templates, test examples and docs.
 - What I checked: I must verify each authorization route and run the tests locally. The generated scaffold is not proof of production security.
@@ -35,7 +35,7 @@ Keep this file current as you work. The challenge asks for at least five dated e
 - AI output: [Summarise]
 - Specific issue I caught: [Describe the actual issue]
 - My correction and test: [Describe]
-- Commit: [Real commit URL]
+- Commit: [https://github.com/maddireddybhavya866-coder/TrustVault/commit/5321678]
 
 ## Reusable context
 - The backend, not the frontend, must enforce authorization on every document route.
