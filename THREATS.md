@@ -7,7 +7,7 @@ Update this document after running each test. Do not claim a threat is fixed unl
 | IDOR: viewer guesses document ID | Every detail/download route checks server-side permission | `test_private_document_denied_to_unshared_viewer` passes locally. Live test 2026-11-05: viewer got 404 on /document/N/download for an unshared document.| Admin has global access by design |
 | Revoked user reuses old URL | Permission is queried on every request; no public file URL | `test_owner_can_grant_and_revoke_access` | Already downloaded copies cannot be recalled |
 | Viewer uploads file | Role decorator blocks upload route | `test_viewer_cannot_upload` | Role changes require admin protection |
-| Unauthorized edit/delete | Server-side owner/edit checks | Add explicit tests before claiming complete | Admin can edit/delete globally |
+| Unauthorized edit/delete | Server-side owner/edit checks | `test_unshared_viewer_cannot_edit`, `test_unshared_viewer_cannot_delete`, `test_read_only_grant_cannot_edit` pass locally (python -m pytest, 8 passed). | Admin can edit/delete globally |
 | Malicious file upload | Extension allowlist, secure filename, size limit, random stored name | Manual test 2026-11-05 on live: test.exe and test.txt.exe were rejected (extension allowlist); an 11 MB file was rejected (10 MB limit). No automated upload tests yet. | No signature validation or antivirus scan |
 | Audit record alteration | Hash chain and verification function | `test_audit_chain_detects_modified_entry` | DB administrator can rewrite entire chain |
 | Password disclosure | Werkzeug password hashing | Local DB check 2026-11-05: all 4 users have scrypt hashes in password_hash; no plaintext password stored. Live database not inspected. | Demo credentials must be changed |
