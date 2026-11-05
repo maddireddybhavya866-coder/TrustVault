@@ -16,12 +16,12 @@ Keep this file current as you work. The challenge asks for at least five dated e
 - My correction and test: The AI suggested a shared incognito session (owner cookie still active). I did not trust that guess. I closed all incognito windows, opened a fresh one, logged in as viewer and requested /document/N/download for an unshared document. Result: 404.
 - Commit: https://github.com/maddireddybhavya866-coder/TrustVault/commit/95c7208
 
-## Entry 3 – Date: YYYY-MM-DD – Audit trail review
-- Prompt: [Paste your actual prompt]
-- AI output: [Summarise]
-- Specific issue I caught: [Describe the actual issue]
-- My correction and test: [Describe]
-- Commit: [Real commit URL]
+## Entry 3 – 2026-11-05 – Authorisation: do the tests really test it?
+- Prompt: Asked the AI to write tests for the edit, delete and permission routes, so that one user cannot change another user's documents.
+- AI output: Four tests (unshared viewer cannot edit, cannot delete, cannot grant permissions; read-only grant cannot edit).
+- Specific issue I checked: The challenge says judges will remove one authorisation check and run my tests. Passing tests alone prove nothing, so I tested the tests.
+- My correction and test: I commented out the owner/admin check in delete_document. test_unshared_viewer_cannot_delete failed (302 instead of 404), so the test really depends on that check. I restored the line and all 8 tests passed again.
+- Commit: https://github.com/maddireddybhavya866-coder/TrustVault/commit/073e0de
 
 ## Entry 4 – Date: YYYY-MM-DD – Upload validation review
 - Prompt: [Paste your actual prompt]
