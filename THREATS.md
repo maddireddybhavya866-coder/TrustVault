@@ -13,7 +13,7 @@ Update this document after running each test. Do not claim a threat is fixed unl
 | Password disclosure | Werkzeug password hashing | Inspect database; verify no plaintext password | Demo credentials must be changed |
 | Session theft/fixation | Flask-Login and HttpOnly/SameSite cookies | Manual cookie inspection | Secure cookie enabled only with COOKIE_SECURE=1 |
 | CSRF on state-changing forms | Flask-WTF CSRFProtect on all POST forms | Manual test 2026-11-05 on live: POST /login without a token returned 400 "CSRF token is missing"; login, upload, edit, grant and delete work with tokens in a browser. Automated tests run with CSRF disabled (WTF_CSRF_ENABLED=False), so there is no automated CSRF test yet. | Logout is a GET route, so it can be triggered cross-site (low impact). |
-| Brute-force login | Not implemented | Add rate-limit tests | Password guessing risk |
+| Brute-force login | Flask-Limiter: 5 POST /login per minute per IP (in-memory storage) | Manual test 2026-11-05 on live: 6th wrong-password attempt returned 429 Too Many Requests. Automated tests disable the limiter, so there is no automated rate-limit test yet. | In-memory limit is per worker and resets on restart; no account lockout; attackers using many IPs are not limited. |
 | SQL injection | SQL values passed as parameters | Review SQL calls and add injection tests | Dynamic SQL fragments are limited to fixed strings |
 | Direct filesystem access | Random filenames outside static directory | Check no public upload route exists | Host/operator filesystem access remains |
 | Audit log deletion/reordering | Hash-chain detects simple alteration | Tamper test | Need external append-only/WORM storage for stronger evidence |
@@ -26,4 +26,4 @@ Trust boundaries: browser-to-Flask requests; Flask-to-SQLite; Flask-to-private f
 Primary security rule: the server makes the authorization decision on every document operation. UI visibility is not authorization.
 
 ## Accepted limitations
-This starter is a demonstration. Do not upload real confidential data. Before production, rate limiting, malware scanning, signature-based file validation, robust backup/restore, external immutable audit storage, secure secret management and a persistent private storage service.
+This starter is a demonstration. Do not upload real confidential data. Before production, malware scanning, signature-based file validation, robust backup/restore, external immutable audit storage, secure secret management and a persistent private storage service.
