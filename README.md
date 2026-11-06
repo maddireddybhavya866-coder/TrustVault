@@ -3,7 +3,8 @@
 A secure document sharing web application built with Flask. It supports role-based access control so that admins, owners, and viewers each get the right level of access to documents.
 
 **Live demo:** https://trustvault-6fr7.onrender.com
-(Free hosting: the first load may take 30 to 60 seconds.)
+
+Demo only. Do not upload real or confidential data. The free hosting plan may reset the database and uploaded files on redeploy, and the first load can take up to a minute.
 
 ## Features
 
